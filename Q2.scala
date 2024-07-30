@@ -6,38 +6,43 @@ object Q2 extends App {
         else (true, None)
     }
 
-    def getStudentInfo(): Unit = {
-        var name = ""
-        var marks = -1
-        var totPossibleMarks = -1       
+    def getStudentInfo(): (String, Int, Int, Double, Char) = {
+    var name = ""
+    var marks = -1
+    var totPossibleMarks = -1       
     
-        print("Enter student name: ")
-        name = scala.io.StdIn.readLine().trim().replaceAll("\\s+", " ")            
+    print("Enter student name: ")
+    name = scala.io.StdIn.readLine().trim().replaceAll("\\s+", " ")            
 
-        print("Enter total possible marks: ")
-        totPossibleMarks = scala.io.StdIn.readInt()
+    print("Enter total possible marks: ")
+    totPossibleMarks = scala.io.StdIn.readInt()
 
-        print("Enter student marks: ")
-        marks = scala.io.StdIn.readInt()
+    print("Enter student marks: ")
+    marks = scala.io.StdIn.readInt()
 
-        val (isValid, error) = validateInput(name, marks, totPossibleMarks)
-        if (!isValid) {
-            println(error.get)
-            return ("", -1, -1, 0.0, 'F')
-        }
+    val percentage = (marks * 100.0) / totPossibleMarks
 
-        val percentage = (marks * 100.0) / totPossibleMarks
 
-        val grade = percentage match {
-            case p if p >= 90 => 'A'
-            case p if p >= 75 => 'B'
-            case p if p >= 50 => 'C'
-            case _ => 'D'
-        }
-
-        (name, totPossibleMarks, marks, percentage, grade)
-        
+    val grade = percentage match {
+        case p if p >= 90 => 'A'
+        case p if p >= 75 => 'B'
+        case p if p >= 50 => 'C'
+        case _ => 'D'
     }
+
+    printStudentRecord(name, totPossibleMarks, marks, percentage, grade)
+
+    val (isValid, error) = validateInput(name, marks, totPossibleMarks)
+    if (!isValid) {
+        error.foreach(println)
+        return ("", -1, -1, 0.0, 'D')
+    }
+
+    
+
+    (name, totPossibleMarks, marks, percentage, grade)
+}
+
 
     def printStudentRecord(student: (String, Int, Int, Double, Char)): Unit = {
         println(s"----------Student Info----------")
@@ -52,13 +57,13 @@ object Q2 extends App {
         var isValid = false
         var studentInfo: (String, Int, Int, Double, Char) = ("", 0, 0, 0.0, 'F')
 
-        while (!isValid) {
+        while(!isValid) {
             studentInfo = getStudentInfo()
-            val (name, totPossibleMarks, marks, _, _) = studentInfo
-            val (valid, error) = validateInput(name, marks, totPossibleMarks)
+            val(name, totPossibleMarks, marks, _, _) = studentInfo
+            val(valid, error) = validateInput(name, marks, totPossibleMarks)
 
-            if (valid) isValid = true
-            else println(error.get)
+            if(valid) isValid = true
+            else error.foreach(println)
         }
 
         studentInfo
